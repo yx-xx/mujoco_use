@@ -1,0 +1,266 @@
+<mujoco model="ti5robot">
+  <default>
+    <default class="robot">
+      <default class="motor">
+        <joint />
+        <motor />
+      </default>
+      <default class="visual">
+        <geom material="visualgeom" contype="0" conaffinity="0" group="2" />
+      </default>
+      <default class="collision">
+        <geom material="collision_material" condim="3" contype="0" conaffinity="1" priority="1" group="1" solref="0.005 1" solimp="0.99 0.999 1e-05" friction="1 0.01 0.01" />
+      </default>
+    </default>
+  </default>
+
+  <compiler angle="radian" />
+
+  <visual>
+    <map znear="0.01" zfar="100" fogstart="3" fogend="50"/>
+    <quality shadowsize="4096" offsamples="4"/>
+    <headlight ambient="0.4 0.4 0.4" diffuse="0.7 0.7 0.7" specular="0.2 0.2 0.2"/>
+  </visual>
+
+  <asset>
+    <!-- 添加更多材料定义 -->
+    <material name="gray_material" rgba="0.776470588235294 0.756862745098039 0.737254901960784 1" />
+    <material name="default_material" rgba="0.7 0.7 0.7 1" />
+    <material name="collision_material" rgba="1.0 0.28 0.1 0.9" />
+    <!-- 更鲜明的颜色配置 -->
+    <material name="base_material" rgba="0.1 0.2 0.7 1" />        <!-- 深蓝 -->
+    <material name="arm_material" rgba="0.2 0.6 0.9 1" />         <!-- 天蓝 -->
+    <material name="joint_material" rgba="0.95 0.55 0.15 1" />    <!-- 橙色 -->
+    <material name="wrist_material" rgba="0.95 0.85 0.2 1" />     <!-- 黄色 -->
+    <material name="neck_material" rgba="0.2 0.7 0.3 1" />        <!-- 绿色 -->
+    <!-- 地板使用内置棋盘纹理 -->
+    <texture name="floor_checker" type="2d" builtin="checker" width="512" height="512" rgb1="0.9 0.9 0.9" rgb2="0.25 0.25 0.25" mark="none" />
+    <material name="floor_material" texture="floor_checker" texrepeat="8 8" texuniform="true" rgba="1 1 1 1" />
+    <material name="visualgeom" rgba="0.7 0.7 0.7 1" />
+    <material name="grid_line_material" rgba="0.15 0.15 0.15 1" />
+    
+    <!-- 网格文件 -->
+    <mesh name="BASE_S.STL" file="meshes/BASE_S.STL" />
+    <mesh name="UP-DOWN_S.STL" file="meshes/UP-DOWN_S.STL" />
+    <mesh name="WAIST_R_S.STL" file="meshes/WAIST_R_S.STL" />
+    <mesh name="WAIST_Y_S.STL" file="meshes/WAIST_Y_S.STL" />
+    <mesh name="WAIST_P_S.STL" file="meshes/WAIST_P_S.STL" />
+    <mesh name="R_SHOULDER_P_S.STL" file="meshes/R_SHOULDER_P_S.STL" />
+    <mesh name="R_SHOULDER_R_S.STL" file="meshes/R_SHOULDER_R_S.STL" />
+    <mesh name="R_SHOULDER_Y_S.STL" file="meshes/R_SHOULDER_Y_S.STL" />
+    <mesh name="R_ELBOW_Y_S.STL" file="meshes/R_ELBOW_Y_S.STL" />
+    <mesh name="R_WRIST_P_S.STL" file="meshes/R_WRIST_P_S.STL" />
+    <mesh name="R_WRIST_Y_S.STL" file="meshes/R_WRIST_Y_S.STL" />
+    <mesh name="R_WRIST_R_S.STL" file="meshes/R_WRIST_R_S.STL" />
+    <mesh name="L_SHOULDER_P_S.STL" file="meshes/L_SHOULDER_P_S.STL" />
+    <mesh name="L_SHOUDLER_R_S.STL" file="meshes/L_SHOUDLER_R_S.STL" />
+    <mesh name="L_SHOULDER_Y_S.STL" file="meshes/L_SHOULDER_Y_S.STL" />
+    <mesh name="L_ELBOW_Y_S.STL" file="meshes/L_ELBOW_Y_S.STL" />
+    <mesh name="L_WRIST_P_S.STL" file="meshes/L_WRIST_P_S.STL" />
+    <mesh name="L_WRIST_Y_S.STL" file="meshes/L_WRIST_Y_S.STL" />
+    <mesh name="L_WRIST_R_S.STL" file="meshes/L_WRIST_R_S.STL" />
+    <mesh name="NECK_Y_S.STL" file="meshes/NECK_Y_S.STL" />
+    <mesh name="NECK_P_S.STL" file="meshes/NECK_P_S.STL" />
+    <mesh name="NECK_R_S.STL" file="meshes/NECK_R_S.STL" />
+  </asset>
+
+  <worldbody>
+    <!-- 添加地板 -->
+    <geom name="floor" type="plane" size="5 5 0.1" pos="0 0 -0.1" quat="1 0 0 0" material="floor_material" />
+    
+    <!-- 添加光源 -->
+    <light name="top" pos="0 0 3" dir="0 0 -1" diffuse="0.5 0.5 0.5" />
+    <light name="front" pos="2 0 1" dir="-1 0 0" diffuse="0.3 0.3 0.3" />
+    
+    <body name="BASE_S" pos="0.00000000 0.00000000 0.00000000" quat="1 0 0 0" childclass="robot">
+      <!-- 移除自由关节，改为固定关节 -->
+      <geom name="BASE_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="BASE_S.STL" class="collision" material="base_material" />
+      <geom name="BASE_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="base_material" type="mesh" mesh="BASE_S.STL" class="visual" />
+      <body name="UP-DOWN_S" pos="8.8652E-05 0 0.1005" quat="1.0 0.0 0.0 0.0">
+        <joint name="UP-DOWN" type="slide" ref="0.0" class="motor" range="0 0.225" axis="0 0 1" />
+        <inertial pos="-0.041989 2.9999999999999997e-05 0.321005" quat="1.0 0.0 0.0 0.0" mass="5.061434" diaginertia="0.10835080298800001 0.117288930706 0.0196810695" />
+        <geom name="UP-DOWN_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="UP-DOWN_S.STL" class="collision" material="arm_material" />
+        <geom name="UP-DOWN_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="arm_material" type="mesh" mesh="UP-DOWN_S.STL" class="visual" />
+        <body name="WAIST_R_S" pos="-0.0653 0 0.469" quat="1.0 0.0 0.0 0.0">
+          <joint name="WAIST_R" type="hinge" ref="0.0" class="motor" range="-0.34907 0.43633" axis="1 0 0" />
+          <inertial pos="0.049284 6.8e-05 0.00412" quat="1.0 0.0 0.0 0.0" mass="1.551026" diaginertia="0.001275813984 0.0014353835430000001 0.00099114161" />
+          <geom name="WAIST_R_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="WAIST_R_S.STL" class="collision" material="joint_material" />
+          <geom name="WAIST_R_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="joint_material" type="mesh" mesh="WAIST_R_S.STL" class="visual" />
+          <body name="WAIST_Y_S" pos="0.0528 0 0.044" quat="1.0 0.0 0.0 0.0">
+            <joint name="WAIST_Y" type="hinge" ref="0.0" class="motor" range="-0.17453 0.17453" axis="0 0 1" />
+            <inertial pos="1.7e-05 0.006685 0.051405" quat="1.0 0.0 0.0 0.0" mass="1.616508" diaginertia="0.001556987289 0.001095523444 0.00138311366" />
+            <geom name="WAIST_Y_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="WAIST_Y_S.STL" class="collision" material="joint_material" />
+            <geom name="WAIST_Y_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="joint_material" type="mesh" mesh="WAIST_Y_S.STL" class="visual" />
+            <body name="WAIST_P_S" pos="0 0.0475 0.055" quat="1.0 0.0 0.0 0.0">
+              <joint name="WAIST_P" type="hinge" ref="0.0" class="motor" range="-0.5236 0.5236" axis="0 -1 0" />
+              <inertial pos="-0.038325000000000005 -0.047687 0.15295599999999998" quat="1.0 0.0 0.0 0.0" mass="6.804443" diaginertia="0.07040564890800001 0.074505722415 0.03797654653" />
+              <geom name="WAIST_P_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="WAIST_P_S.STL" class="collision" material="arm_material" />
+              <geom name="WAIST_P_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="arm_material" type="mesh" mesh="WAIST_P_S.STL" class="visual" />
+              <body name="R_SHOULDER_P_S" pos="0 -0.1655 0.257" quat="1.0 0.0 0.0 0.0">
+                <joint name="R_SHOULDER_P" type="hinge" ref="0.0" class="motor" range="-3.1416 3.1416" axis="0 -1 0" />
+                <inertial pos="-0.000194 -0.056750999999999996 -2e-06" quat="1.0 0.0 0.0 0.0" mass="0.840858" diaginertia="0.000523879592 0.000454438271 0.00065628028" />
+                <geom name="R_SHOULDER_P_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="R_SHOULDER_P_S.STL" class="collision" material="arm_material" />
+                <geom name="R_SHOULDER_P_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="arm_material" type="mesh" mesh="R_SHOULDER_P_S.STL" class="visual" />
+                <body name="R_SHOULDER_R_S" pos="0.0315 -0.063 0" quat="1.0 0.0 0.0 0.0">
+                  <joint name="R_SHOULDER_R" type="hinge" ref="0.0" class="motor" range="-0.5236 1.5708" axis="1 0 0" />
+                  <inertial pos="-0.030286 -0.096741 0.0" quat="1.0 0.0 0.0 0.0" mass="0.643146" diaginertia="0.0012506429469999998 0.00035315896399999995 0.0013891790319999998" />
+                  <geom name="R_SHOULDER_R_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="R_SHOULDER_R_S.STL" class="collision" material="joint_material" />
+                  <geom name="R_SHOULDER_R_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="joint_material" type="mesh" mesh="R_SHOULDER_R_S.STL" class="visual" />
+                  <body name="R_SHOULDER_Y_S" pos="-0.0315 -0.1425 0" quat="1.0 0.0 0.0 0.0">
+                    <joint name="R_SHOULDER_Y" type="hinge" ref="0.0" class="motor" range="-3.1416 3.1416" axis="0 -1 0" />
+                    <inertial pos="0.0068 -0.08468600000000001 0.000104" quat="1.0 0.0 0.0 0.0" mass="0.5618179999999999" diaginertia="0.000585250386 0.000183615299 0.000627811617" />
+                    <geom name="R_SHOULDER_Y_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="R_SHOULDER_Y_S.STL" class="collision" material="arm_material" />
+                    <geom name="R_SHOULDER_Y_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="arm_material" type="mesh" mesh="R_SHOULDER_Y_S.STL" class="visual" />
+                    <body name="R_ELBOW_Y_S" pos="0.0296 -0.0975 0" quat="1.0 0.0 0.0 0.0">
+                      <joint name="R_ELBOW_Y" type="hinge" ref="0.0" class="motor" range="0 2.0071" axis="1 0 0" />
+                      <inertial pos="-0.027983 -0.071035 0.0" quat="1.0 0.0 0.0 0.0" mass="0.43879" diaginertia="0.000454852451 0.000211160605 0.000532377032" />
+                      <geom name="R_ELBOW_Y_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="R_ELBOW_Y_S.STL" class="collision" material="joint_material" />
+                      <geom name="R_ELBOW_Y_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="joint_material" type="mesh" mesh="R_ELBOW_Y_S.STL" class="visual" />
+                      <body name="R_WRIST_P_S" pos="-0.0296 -0.113 0" quat="1.0 0.0 0.0 0.0">
+                        <joint name="R_WRIST_P" type="hinge" ref="0.0" class="motor" range="-3.1416 3.1416" axis="0 -1 0" />
+                        <inertial pos="4e-06 -0.049203000000000004 0.023254" quat="1.0 0.0 0.0 0.0" mass="0.394398" diaginertia="0.000508578041 0.00014304409899999998 0.000473947691" />
+                        <geom name="R_WRIST_P_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="R_WRIST_P_S.STL" class="collision" material="wrist_material" />
+                        <geom name="R_WRIST_P_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="wrist_material" type="mesh" mesh="R_WRIST_P_S.STL" class="visual" />
+                        <body name="R_WRIST_Y_S" pos="0 -0.116 0.037" quat="1.0 0.0 0.0 0.0">
+                          <joint name="R_WRIST_Y" type="hinge" ref="0.0" class="motor" range="-1.3963 1.3963" axis="0 0 1" />
+                          <inertial pos="0.006343 -9.3e-05 -0.032466999999999996" quat="1.0 0.0 0.0 0.0" mass="0.25751" diaginertia="6.712070200000001e-05 8.8644898e-05 6.7677501e-05" />
+                          <geom name="R_WRIST_Y_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="R_WRIST_Y_S.STL" class="collision" material="wrist_material" />
+                          <geom name="R_WRIST_Y_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="wrist_material" type="mesh" mesh="R_WRIST_Y_S.STL" class="visual" />
+                          <body name="R_WRIST_R_S" pos="0.026 0 -0.037" quat="1.0 0.0 0.0 0.0">
+                            <joint name="R_WRIST_R" type="hinge" ref="0.0" class="motor" range="0 1.5533" axis="1 0 0" />
+                            <inertial pos="-0.01907 -0.15728299999999998 -0.01332" quat="1.0 0.0 0.0 0.0" mass="0.77062" diaginertia="0.003010840073 0.000364102783 0.00294791308" />
+                            <geom name="R_WRIST_R_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="R_WRIST_R_S.STL" class="collision" material="wrist_material" />
+                            <geom name="R_WRIST_R_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="wrist_material" type="mesh" mesh="R_WRIST_R_S.STL" class="visual" />
+                          </body>
+                        </body>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+              <body name="L_SHOULDER_P_S" pos="0 0.0705 0.257" quat="1.0 0.0 0.0 0.0">
+                <joint name="L_SHOULDER_P" type="hinge" ref="0.0" class="motor" range="-3.1416 3.1416" axis="0 1 0" />
+                <inertial pos="-0.000194 0.056750999999999996 1e-06" quat="1.0 0.0 0.0 0.0" mass="0.840858" diaginertia="0.000523875497 0.000454438393 0.000656276063" />
+                <geom name="L_SHOULDER_P_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="L_SHOULDER_P_S.STL" class="collision" material="arm_material" />
+                <geom name="L_SHOULDER_P_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="arm_material" type="mesh" mesh="L_SHOULDER_P_S.STL" class="visual" />
+                <body name="L_SHOUDLER_R_S" pos="0.0315 0.063 0" quat="1.0 0.0 0.0 0.0">
+                  <joint name="L_SHOUDLER_R" type="hinge" ref="0.0" class="motor" range="-1.5708 0.5236" axis="1 0 0" />
+                  <inertial pos="-0.030284 0.096741 0.0" quat="1.0 0.0 0.0 0.0" mass="0.643146" diaginertia="0.001250643438 0.000353007409 0.0013890279680000002" />
+                  <geom name="L_SHOUDLER_R_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="L_SHOUDLER_R_S.STL" class="collision" material="joint_material" />
+                  <geom name="L_SHOUDLER_R_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="joint_material" type="mesh" mesh="L_SHOUDLER_R_S.STL" class="visual" />
+                  <body name="L_SHOULDER_Y_S" pos="-0.0315 0.1425 0" quat="1.0 0.0 0.0 0.0">
+                    <joint name="L_SHOULDER_Y" type="hinge" ref="0.0" class="motor" range="-3.1416 3.1416" axis="0 1 0" />
+                    <inertial pos="0.0068 0.084941 0.000104" quat="1.0 0.0 0.0 0.0" mass="0.5618179999999999" diaginertia="0.000588890782 0.00018361529500000002 0.000631452018" />
+                    <geom name="L_SHOULDER_Y_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="L_SHOULDER_Y_S.STL" class="collision" material="arm_material" />
+                    <geom name="L_SHOULDER_Y_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="arm_material" type="mesh" mesh="L_SHOULDER_Y_S.STL" class="visual" />
+                    <body name="L_ELBOW_Y_S" pos="0.0296 0.0975 0" quat="1.0 0.0 0.0 0.0">
+                      <joint name="L_ELBOW_Y" type="hinge" ref="0.0" class="motor" range="-2.0071 0" axis="1 0 0" />
+                      <inertial pos="-0.027983 0.071035 0.0" quat="1.0 0.0 0.0 0.0" mass="0.43879" diaginertia="0.000454852875 0.000211160605 0.000532377457" />
+                      <geom name="L_ELBOW_Y_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="L_ELBOW_Y_S.STL" class="collision" material="joint_material" />
+                      <geom name="L_ELBOW_Y_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="joint_material" type="mesh" mesh="L_ELBOW_Y_S.STL" class="visual" />
+                      <body name="L_WRIST_P_S" pos="-0.0296 0.113 0" quat="1.0 0.0 0.0 0.0">
+                        <joint name="L_WRIST_P" type="hinge" ref="0.0" class="motor" range="-3.1416 3.1416" axis="0 1 0" />
+                        <inertial pos="4e-06 0.049033 0.023283" quat="1.0 0.0 0.0 0.0" mass="0.394398" diaginertia="0.000510315583 0.000143357897 0.000475371436" />
+                        <geom name="L_WRIST_P_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="L_WRIST_P_S.STL" class="collision" material="wrist_material" />
+                        <geom name="L_WRIST_P_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="wrist_material" type="mesh" mesh="L_WRIST_P_S.STL" class="visual" />
+                        <body name="L_WRIST_Y_S" pos="0 0.116 0.037" quat="1.0 0.0 0.0 0.0">
+                          <joint name="L_WRIST_Y" type="hinge" ref="0.0" class="motor" range="-1.3963 1.3963" axis="0 0 1" />
+                          <inertial pos="0.006343 -0.000118 -0.032517000000000004" quat="1.0 0.0 0.0 0.0" mass="0.25751" diaginertia="6.7234341e-05 8.8778895e-05 6.765714299999999e-05" />
+                          <geom name="L_WRIST_Y_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="L_WRIST_Y_S.STL" class="collision" material="wrist_material" />
+                          <geom name="L_WRIST_Y_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="wrist_material" type="mesh" mesh="L_WRIST_Y_S.STL" class="visual" />
+                          <body name="L_WRIST_R_S" pos="0.026 0 -0.037" quat="1.0 0.0 0.0 0.0">
+                            <joint name="L_WRIST_R" type="hinge" ref="0.0" class="motor" range="-1.5533 0.08727" axis="1 0 0" />
+                            <inertial pos="-0.021523 0.14997300000000002 -0.013839" quat="1.0 0.0 0.0 0.0" mass="0.77062" diaginertia="0.00268767041 0.00036157641 0.0026076142030000003" />
+                            <geom name="L_WRIST_R_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="L_WRIST_R_S.STL" class="collision" material="wrist_material" />
+                            <geom name="L_WRIST_R_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="wrist_material" type="mesh" mesh="L_WRIST_R_S.STL" class="visual" />
+                          </body>
+                        </body>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+              <body name="NECK_Y_S" pos="0 -0.0475 0.299" quat="1.0 0.0 0.0 0.0">
+                <joint name="NECK_Y" type="hinge" ref="0.0" class="motor" range="-1.5708 1.5708" axis="0 0 1" />
+                <inertial pos="-0.003437 -0.032159 0.043421999999999995" quat="1.0 0.0 0.0 0.0" mass="0.373532" diaginertia="0.000349489996 0.00033792047200000003 9.3684199e-05" />
+                <geom name="NECK_Y_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="NECK_Y_S.STL" class="collision" material="neck_material" />
+                <geom name="NECK_Y_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="neck_material" type="mesh" mesh="NECK_Y_S.STL" class="visual" />
+                <body name="NECK_P_S" pos="0 -0.037 0.102" quat="1.0 0.0 0.0 0.0">
+                  <joint name="NECK_P" type="hinge" ref="0.0" class="motor" range="-0.5236 0.69813" axis="0 -1 0" />
+                  <inertial pos="0.02161 0.028097 -0.002907" quat="1.0 0.0 0.0 0.0" mass="0.244094" diaginertia="2.4512597e-05 2.4448557e-05 3.5449779e-05" />
+                  <geom name="NECK_P_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="NECK_P_S.STL" class="collision" material="neck_material" />
+                  <geom name="NECK_P_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="neck_material" type="mesh" mesh="NECK_P_S.STL" class="visual" />
+                  <body name="NECK_R_S" pos="0.026 0.037 0" quat="1.0 0.0 0.0 0.0">
+                    <joint name="NECK_R" type="hinge" ref="0.0" class="motor" range="-0.2618 0.2618" axis="1 0 0" />
+                    <inertial pos="0.025114 -1e-06 0.100658" quat="1.0 0.0 0.0 0.0" mass="0.384063" diaginertia="0.000454388505 0.001102873495 0.000944836581" />
+                    <geom name="NECK_R_S_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="NECK_R_S.STL" class="collision" material="neck_material" />
+                    <geom name="NECK_R_S_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="neck_material" type="mesh" mesh="NECK_R_S.STL" class="visual" />
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <site name="BASE_S_site" pos="0 0 0" quat="1 0 0 0" />
+      <camera name="front_camera" mode="track" fovy="90.0" quat="4.329780281177467e-17 4.329780281177466e-17 0.7071067811865475 0.7071067811865476" pos="0.0 2.0 0.5" />
+      <camera name="side_camera" mode="track" fovy="90.0" quat="-0.5 -0.4999999999999999 0.5 0.5000000000000001" pos="-2.0 0.0 0.5" />
+    </body>
+  </worldbody>
+
+  <actuator>
+    <motor name="UP-DOWN_ctrl" joint="UP-DOWN" class="motor" />
+    <motor name="WAIST_R_ctrl" joint="WAIST_R" class="motor" />
+    <motor name="WAIST_Y_ctrl" joint="WAIST_Y" class="motor" />
+    <motor name="WAIST_P_ctrl" joint="WAIST_P" class="motor" />
+    <motor name="R_SHOULDER_P_ctrl" joint="R_SHOULDER_P" class="motor" />
+    <motor name="R_SHOULDER_R_ctrl" joint="R_SHOULDER_R" class="motor" />
+    <motor name="R_SHOULDER_Y_ctrl" joint="R_SHOULDER_Y" class="motor" />
+    <motor name="R_ELBOW_Y_ctrl" joint="R_ELBOW_Y" class="motor" />
+    <motor name="R_WRIST_P_ctrl" joint="R_WRIST_P" class="motor" />
+    <motor name="R_WRIST_Y_ctrl" joint="R_WRIST_Y" class="motor" />
+    <motor name="R_WRIST_R_ctrl" joint="R_WRIST_R" class="motor" />
+    <motor name="L_SHOULDER_P_ctrl" joint="L_SHOULDER_P" class="motor" />
+    <motor name="L_SHOUDLER_R_ctrl" joint="L_SHOUDLER_R" class="motor" />
+    <motor name="L_SHOULDER_Y_ctrl" joint="L_SHOULDER_Y" class="motor" />
+    <motor name="L_ELBOW_Y_ctrl" joint="L_ELBOW_Y" class="motor" />
+    <motor name="L_WRIST_P_ctrl" joint="L_WRIST_P" class="motor" />
+    <motor name="L_WRIST_Y_ctrl" joint="L_WRIST_Y" class="motor" />
+    <motor name="L_WRIST_R_ctrl" joint="L_WRIST_R" class="motor" />
+    <motor name="NECK_Y_ctrl" joint="NECK_Y" class="motor" />
+    <motor name="NECK_P_ctrl" joint="NECK_P" class="motor" />
+    <motor name="NECK_R_ctrl" joint="NECK_R" class="motor" />
+  </actuator>
+
+  <contact>
+    <exclude body1="BASE_S" body2="UP-DOWN_S" />
+    <exclude body1="UP-DOWN_S" body2="WAIST_R_S" />
+    <exclude body1="WAIST_R_S" body2="WAIST_Y_S" />
+    <exclude body1="WAIST_Y_S" body2="WAIST_P_S" />
+    <exclude body1="WAIST_P_S" body2="R_SHOULDER_P_S" />
+    <exclude body1="R_SHOULDER_P_S" body2="R_SHOULDER_R_S" />
+    <exclude body1="R_SHOULDER_R_S" body2="R_SHOULDER_Y_S" />
+    <exclude body1="R_SHOULDER_Y_S" body2="R_ELBOW_Y_S" />
+    <exclude body1="R_ELBOW_Y_S" body2="R_WRIST_P_S" />
+    <exclude body1="R_WRIST_P_S" body2="R_WRIST_Y_S" />
+    <exclude body1="R_WRIST_Y_S" body2="R_WRIST_R_S" />
+    <exclude body1="WAIST_P_S" body2="L_SHOULDER_P_S" />
+    <exclude body1="L_SHOULDER_P_S" body2="L_SHOUDLER_R_S" />
+    <exclude body1="L_SHOUDLER_R_S" body2="L_SHOULDER_Y_S" />
+    <exclude body1="L_SHOULDER_Y_S" body2="L_ELBOW_Y_S" />
+    <exclude body1="L_ELBOW_Y_S" body2="L_WRIST_P_S" />
+    <exclude body1="L_WRIST_P_S" body2="L_WRIST_Y_S" />
+    <exclude body1="L_WRIST_Y_S" body2="L_WRIST_R_S" />
+    <exclude body1="WAIST_P_S" body2="NECK_Y_S" />
+    <exclude body1="NECK_Y_S" body2="NECK_P_S" />
+    <exclude body1="NECK_P_S" body2="NECK_R_S" />
+  </contact>
+
+  <sensor>
+    <framepos name="BASE_S_site_pos" objtype="site" objname="BASE_S_site" />
+    <framequat name="BASE_S_site_quat" objtype="site" objname="BASE_S_site" />
+    <framelinvel name="BASE_S_site_linvel" objtype="site" objname="BASE_S_site" />
+    <frameangvel name="BASE_S_site_angvel" objtype="site" objname="BASE_S_site" />
+    <velocimeter name="BASE_S_site_vel" site="BASE_S_site" />
+  </sensor>
+</mujoco>
