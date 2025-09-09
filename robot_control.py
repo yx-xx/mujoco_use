@@ -21,24 +21,24 @@ class RobotController:
         self.model.jnt_stiffness[:] = 0.0  # 关节刚度初始化为0
         
         # 控制器参数
-        self.kp = np.array([100.0] * self.n_joints)  # 每个关节的位置增益
+        self.kp = np.array([1000.0] * self.n_joints)  # 每个关节的位置增益
         self.kd = np.array([10.0] * self.n_joints)   # 每个关节的速度增益
         self.ki = np.array([0.1] * self.n_joints)    # 每个关节的积分增益
         
         # 设置初始状态和目标
-        self.target_positions = self.data.qpos[:self.n_joints].copy()
+        self.target_positions = np.zeros(self.n_joints)
         self.target_velocities = np.zeros(self.n_joints)
         self.target_torques = np.zeros(self.n_joints)
         
         # 积分误差和限幅参数
         self.pos_error_integral = np.zeros(self.n_joints)
         self.integral_limit = 1.0  # 积分限幅值
-        self.output_limit = 100.0  # 输出限幅值
+        self.output_limit = 10.0  # 输出限幅值
         
         # 控制相关标志
         self.control_mode = 'position'  # 'position', 'velocity', 'torque'
-        self.use_gravity_comp = True    # 是否使用重力补偿
-        self.use_friction_comp = True   # 是否使用摩擦力补偿
+        self.use_gravity_comp = False    # 是否使用重力补偿
+        self.use_friction_comp = False   # 是否使用摩擦力补偿
     
     def get_compensation_torques(self):
         """计算补偿力矩（重力和摩擦力）"""
@@ -170,8 +170,8 @@ def main():
                 # 每0.5秒打印一次状态信息
                 current_time = time.time()
                 if current_time - last_print_time > 0.5:
-                    print(f"\n{'='*50}")
-                    print(f"控制模式: {controller.control_mode}")
+                    # print(f"\n{'='*50}")
+                    # print(f"控制模式: {controller.control_mode}")
                     print(f"最大位置误差: {pos_error.max():.6f}")
                     print(f"最大速度误差: {vel_error.max():.6f}")
                     print(f"增益 kp: {controller.kp[0]:.1f}, kd: {controller.kd[0]:.1f}")
