@@ -27,7 +27,7 @@ cd mujoco_use
 
 2. 创建并激活conda环境（推荐）：
 ```bash
-conda create -n ros2_mujoco python=3.8
+conda create -n ros2_mujoco python=3.11
 conda activate ros2_mujoco
 ```
 
