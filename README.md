@@ -25,18 +25,26 @@ git clone https://github.com/yx-xx/mujoco_use
 cd mujoco_use
 ```
 
-2. 创建并激活conda环境（推荐）：
+2. 环境配置（两种方式二选一）：
+
+### 方式一：使用environment.yml（推荐）
 ```bash
-conda create -n ros2_mujoco python=3.11
+# 使用环境文件一键创建和配置环境
+conda env create -f environment.yml
 conda activate ros2_mujoco
 ```
 
-3. 安装依赖：
+### 方式二：手动配置
 ```bash
+# 创建并激活conda环境
+conda create -n ros2_mujoco python=3.11
+conda activate ros2_mujoco
+
+# 安装依赖
 pip install -r requirements.txt
 ```
 
-4. 编译ROS2消息：
+3. 编译ROS2消息：
 ```bash
 colcon build --packages-select robot_msgs
 source install/setup.bash
