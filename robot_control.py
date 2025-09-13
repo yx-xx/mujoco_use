@@ -24,9 +24,9 @@ class RobotController:
         self.model.jnt_stiffness[:] = 0.0  # 关节刚度初始化为0
         
         # 控制器参数
-        self.kp = np.array([100.0] * self.n_joints)
+        self.kp = np.array([300.0] * self.n_joints)
         self.kd = np.array([0.0] * self.n_joints)
-        self.ki = np.array([0.0] * self.n_joints)
+        self.ki = np.array([1.0] * self.n_joints)
         
         # 设置初始状态和目标
         self.target_positions = np.zeros(self.n_joints)
@@ -40,7 +40,7 @@ class RobotController:
         
         # 控制相关标志
         self.control_mode = 'position'  # 'position', 'velocity', 'torque'
-        self.use_gravity_comp = True    # 是否使用重力补偿
+        self.use_gravity_comp = False    # 是否使用重力补偿
         self.use_friction_comp = False   # 是否使用摩擦力补偿
     
     def get_compensation_torques(self):
