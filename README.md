@@ -13,9 +13,9 @@
 ## 系统要求
 
 - Ubuntu 22.04 或更高版本
-- Python 3.8 或更高版本
+- Python 3.11 或更高版本
 - ROS2 Humble 或更高版本
-- MuJoCo 3.0.0 或更高版本
+- MuJoCo 3.3.0 或更高版本
 
 ## 安装
 
@@ -98,6 +98,7 @@ mujoco_use/
 │   └── ti5robot_x/
 ├── pid_plots/            # PID曲线图表保存目录
 ├── requirements.txt
+├── environment.yml
 └── README.md
 ```
 
@@ -124,12 +125,16 @@ float64[] velocity_error  # 速度误差
 
 ## 常见问题
 
-1. 如果遇到MuJoCo导入错误，确保正确安装了MuJoCo：
+1. 如果遇到openGL的报错：
+
+可能是驱动版本的问题，更新驱动应该可以解决
+
+2. 如果遇到MuJoCo导入错误，确保正确安装了MuJoCo：
 ```bash
 pip install mujoco
 ```
 
-2. 如果ROS2消息无法识别，确保已经编译并source了工作空间：
+3. 如果ROS2消息无法识别，确保已经编译并source了工作空间：
 ```bash
 colcon build --packages-select robot_msgs
 source install/setup.bash
