@@ -232,6 +232,15 @@
     <motor name="NECK_R_ctrl" joint="NECK_R" class="motor" />
   </actuator>
 
+
+  <keyframe>
+    <key name="home" qpos="
+      0.0   0    0    0    0    0.0   0    0.0   0    0    0.0
+      0     0.0  0    0.0  0    0     0    0     0    0    
+    "/>
+  </keyframe>
+
+
   <contact>
     <exclude body1="BASE_S" body2="UP-DOWN_S" />
     <exclude body1="UP-DOWN_S" body2="WAIST_R_S" />

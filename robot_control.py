@@ -2,12 +2,15 @@ import mujoco
 import mujoco.viewer
 import numpy as np
 import time
+# from plot import PIDVisualizer
 
 class RobotController:
     def __init__(self, model_path):
         # 加载模型
         self.model = mujoco.MjModel.from_xml_path(model_path)
         self.data = mujoco.MjData(self.model)
+        # 创建可视化器
+        # self.visualizer = PIDVisualizer(self.model.nv)
         
         # 重置模型状态
         mujoco.mj_resetData(self.model, self.data)
@@ -17,13 +20,13 @@ class RobotController:
         self.model.opt.timestep = 0.002  # 设置更大的时间步长以提高稳定性
         
         # 设置关节阻尼和刚度
-        self.model.dof_damping[:] = 1.0  # 阻尼系数
+        self.model.dof_damping[:] = 50.0  # 阻尼系数
         self.model.jnt_stiffness[:] = 0.0  # 关节刚度初始化为0
         
         # 控制器参数
-        self.kp = np.array([1000.0] * self.n_joints)  # 每个关节的位置增益
-        self.kd = np.array([10.0] * self.n_joints)   # 每个关节的速度增益
-        self.ki = np.array([0.1] * self.n_joints)    # 每个关节的积分增益
+        self.kp = np.array([100.0] * self.n_joints)
+        self.kd = np.array([0.02] * self.n_joints)
+        self.ki = np.array([2.0] * self.n_joints)
         
         # 设置初始状态和目标
         self.target_positions = np.zeros(self.n_joints)
@@ -38,7 +41,7 @@ class RobotController:
         # 控制相关标志
         self.control_mode = 'position'  # 'position', 'velocity', 'torque'
         self.use_gravity_comp = False    # 是否使用重力补偿
-        self.use_friction_comp = False   # 是否使用摩擦力补偿
+        self.use_friction_comp = True   # 是否使用摩擦力补偿
     
     def get_compensation_torques(self):
         """计算补偿力矩（重力和摩擦力）"""
@@ -84,7 +87,7 @@ class RobotController:
         u += self.get_compensation_torques()
         
         # 输出限幅
-        u = np.clip(u, -self.output_limit, self.output_limit)
+        # u = np.clip(u, -self.output_limit, self.output_limit)
         
         return u
     
@@ -137,11 +140,6 @@ def main():
         initial_pos = controller.data.qpos[:controller.n_joints].copy()
         controller.target_positions = initial_pos
         
-        # 设置较小的初始阻尼和增益，然后逐渐增加
-        controller.model.dof_damping[:] = 0.1
-        controller.kp = np.array([10.0] * controller.n_joints)
-        controller.kd = np.array([1.0] * controller.n_joints)
-        
         print("正在初始化控制器...")
         
         # 主循环
@@ -151,31 +149,30 @@ def main():
                 # 记录循环开始时间
                 step_start = time.time()
                 
-                # 逐渐增加阻尼和增益（在前5秒内）
-                elapsed_time = time.time() - step_start
-                if elapsed_time < 5.0:
-                    ramp = min(1.0, elapsed_time / 5.0)
-                    controller.model.dof_damping[:] = 0.1 + ramp * 0.9  # 从0.1渐增到1.0
-                    controller.kp = np.array([10.0 + ramp * 90.0] * controller.n_joints)  # 从10渐增到100
-                    controller.kd = np.array([1.0 + ramp * 9.0] * controller.n_joints)   # 从1渐增到10
-                
+
+                controller.target_positions = np.ones(controller.n_joints)*0.1
+
                 # 执行控制
                 controller.step()
                 
                 # 计算误差
-                pos_error = np.abs(controller.target_positions - 
-                                 controller.data.qpos[:controller.n_joints])
-                vel_error = np.abs(controller.data.qvel[:controller.n_joints])
+                # pos_error = np.abs(controller.target_positions - 
+                #                  controller.data.qpos[:controller.n_joints])
+                # vel_error = np.abs(controller.data.qvel[:controller.n_joints])
+                pos_error = controller.target_positions - controller.data.qpos[:controller.n_joints]
+                # vel_error = controller.data.qvel[:controller.n_joints]
+
+                # # 更新PID可视化
+                # controller.visualizer.update(
+                #     controller.target_positions,
+                #     controller.data.qpos[:controller.n_joints],
+                #     pos_error
+                # )
                 
                 # 每0.5秒打印一次状态信息
                 current_time = time.time()
                 if current_time - last_print_time > 0.5:
-                    # print(f"\n{'='*50}")
-                    # print(f"控制模式: {controller.control_mode}")
                     print(f"最大位置误差: {pos_error.max():.6f}")
-                    print(f"最大速度误差: {vel_error.max():.6f}")
-                    print(f"增益 kp: {controller.kp[0]:.1f}, kd: {controller.kd[0]:.1f}")
-                    print(f"阻尼系数: {controller.model.dof_damping[0]:.1f}")
                     last_print_time = current_time
                 
                 # 更新可视化
