@@ -126,6 +126,8 @@ class RobotControllerROS(Node):
              self.kd * vel_error + 
              self.ki * self.pos_error_integral)
         
+        u += self.get_compensation_torques()
+        
         return u
     
     def velocity_control(self):
