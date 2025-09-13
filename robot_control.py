@@ -20,13 +20,13 @@ class RobotController:
         self.model.opt.timestep = 0.002  # 设置更大的时间步长以提高稳定性
         
         # 设置关节阻尼和刚度
-        self.model.dof_damping[:] = 50.0  # 阻尼系数
+        self.model.dof_damping[:] = 100.0  # 阻尼系数
         self.model.jnt_stiffness[:] = 0.0  # 关节刚度初始化为0
         
         # 控制器参数
         self.kp = np.array([100.0] * self.n_joints)
-        self.kd = np.array([0.02] * self.n_joints)
-        self.ki = np.array([2.0] * self.n_joints)
+        self.kd = np.array([0.0] * self.n_joints)
+        self.ki = np.array([0.0] * self.n_joints)
         
         # 设置初始状态和目标
         self.target_positions = np.zeros(self.n_joints)
@@ -40,8 +40,8 @@ class RobotController:
         
         # 控制相关标志
         self.control_mode = 'position'  # 'position', 'velocity', 'torque'
-        self.use_gravity_comp = False    # 是否使用重力补偿
-        self.use_friction_comp = True   # 是否使用摩擦力补偿
+        self.use_gravity_comp = True    # 是否使用重力补偿
+        self.use_friction_comp = False   # 是否使用摩擦力补偿
     
     def get_compensation_torques(self):
         """计算补偿力矩（重力和摩擦力）"""
@@ -150,7 +150,10 @@ def main():
                 step_start = time.time()
                 
 
-                controller.target_positions = np.ones(controller.n_joints)*0.1
+                controller.target_positions = np.array([0.0,0.0,0.0,0.0,
+                                                        1.5708,1.5708,1.5708,1.5708,1.5708,1.5708,1.5708,
+                                                        -1.5708,-1.5708,-1.5708,-1.5708,-1.5708,-1.5708,-1.5708,
+                                                        0.0,0.0,0.0,])
 
                 # 执行控制
                 controller.step()
