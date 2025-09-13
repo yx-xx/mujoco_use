@@ -40,7 +40,7 @@ class RobotController:
         
         # 控制相关标志
         self.control_mode = 'position'  # 'position', 'velocity', 'torque'
-        self.use_gravity_comp = False    # 是否使用重力补偿
+        self.use_gravity_comp = True    # 是否使用重力补偿
         self.use_friction_comp = False   # 是否使用摩擦力补偿
     
     def get_compensation_torques(self):
@@ -157,12 +157,17 @@ def main():
                                                         -1.5708,-1.5708,-1.5708,-1.5708,-1.5708,-1.5708,-1.5708,
                                                         0.0,0.0,0.0,])
 
-                # i += 0.001
+                # i += 0.01
 
                 # controller.target_positions = np.array([0.0,0.0,0.0,0.0,
                 #                                         i,i,i,i,i,i,i,
                 #                                         -i,-i,-i,-i,-i,-i,-i,
                 #                                         0.0,0.0,0.0,])
+                
+                # controller.target_positions = np.array([0,i,i,i,
+                #                                         0,0,0,0,0,0,0,
+                #                                         0,0,0,0,0,0,0,
+                #                                         i,i,i,])
 
                 # 执行控制
                 controller.step()
