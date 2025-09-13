@@ -129,7 +129,9 @@ class RobotController:
 def main():
     # 创建机器人控制器
     controller = RobotController('./models/ti5robot_x/ti5robot.xml')
-    
+
+    # i = 0
+
     # 创建可视化窗口
     with mujoco.viewer.launch_passive(controller.model, controller.data) as viewer:
         # 重置到初始状态并等待稳定
@@ -154,6 +156,13 @@ def main():
                                                         1.5708,1.5708,1.5708,1.5708,1.5708,1.5708,1.5708,
                                                         -1.5708,-1.5708,-1.5708,-1.5708,-1.5708,-1.5708,-1.5708,
                                                         0.0,0.0,0.0,])
+
+                # i += 0.001
+
+                # controller.target_positions = np.array([0.0,0.0,0.0,0.0,
+                #                                         i,i,i,i,i,i,i,
+                #                                         -i,-i,-i,-i,-i,-i,-i,
+                #                                         0.0,0.0,0.0,])
 
                 # 执行控制
                 controller.step()
