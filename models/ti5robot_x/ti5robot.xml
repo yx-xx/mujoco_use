@@ -27,7 +27,7 @@
     <material name="gray_material" rgba="0.776470588235294 0.756862745098039 0.737254901960784 1" />
     <material name="default_material" rgba="0.7 0.7 0.7 1" />
     <material name="collision_material" rgba="1.0 0.28 0.1 0.9" />
-    <!-- 更鲜明的颜色配置 -->
+    <!-- 颜色配置 -->
     <material name="base_material" rgba="0.1 0.2 0.7 1" />        <!-- 深蓝 -->
     <material name="arm_material" rgba="0.2 0.6 0.9 1" />         <!-- 天蓝 -->
     <material name="joint_material" rgba="0.95 0.55 0.15 1" />    <!-- 橙色 -->
